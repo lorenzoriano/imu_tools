@@ -38,6 +38,8 @@ ImuFilter::ImuFilter(ros::NodeHandle nh, ros::NodeHandle nh_private):
    gain_ = 0.1;
   if (!nh_private_.getParam ("use_mag", use_mag_))
    use_mag_ = true;
+  if (!nh_private_.getParam ("publish_tf", publish_tf_))
+   publish_tf_ = true;
   if (!nh_private_.getParam ("fixed_frame", fixed_frame_))
    fixed_frame_ = "odom";
   if (!nh_private_.getParam ("constant_dt", constant_dt_))
@@ -108,8 +110,9 @@ void ImuFilter::imuCallback(const ImuMsg::ConstPtr& imu_msg_raw)
   if (!initialized_)
   {
     // initialize roll/pitch orientation from acc. vector    
+    double sign = copysignf(1.0, lin_acc.z);
     double roll  = atan2(lin_acc.x, sqrt(lin_acc.y*lin_acc.y + lin_acc.z*lin_acc.z));
-    double pitch = atan2(lin_acc.y, sqrt(lin_acc.x*lin_acc.x + lin_acc.z*lin_acc.z));                    
+    double pitch = atan2(lin_acc.y, sign * sqrt(lin_acc.x*lin_acc.x + lin_acc.z*lin_acc.z));
     double yaw = 0.0;
                         
     tf::Quaternion init_q = tf::createQuaternionFromRPY(roll, pitch, yaw);
@@ -139,7 +142,8 @@ void ImuFilter::imuCallback(const ImuMsg::ConstPtr& imu_msg_raw)
     dt);
 
   publishFilteredMsg(imu_msg_raw);
-  publishTransform(imu_msg_raw);
+  if (publish_tf_)
+    publishTransform(imu_msg_raw);
 }
 
 void ImuFilter::imuMagCallback(
@@ -158,8 +162,9 @@ void ImuFilter::imuMagCallback(
   if (!initialized_)
   {
     // initialize roll/pitch orientation from acc. vector    
+    double sign = copysignf(1.0, lin_acc.z);
     double roll  = atan2(lin_acc.x, sqrt(lin_acc.y*lin_acc.y + lin_acc.z*lin_acc.z));
-    double pitch = atan2(lin_acc.y, sqrt(lin_acc.x*lin_acc.x + lin_acc.z*lin_acc.z));                    
+    double pitch = atan2(lin_acc.y, sign * sqrt(lin_acc.x*lin_acc.x + lin_acc.z*lin_acc.z));
     double yaw = 0.0; // TODO: initialize from magnetic raeding?
                         
     tf::Quaternion init_q = tf::createQuaternionFromRPY(roll, pitch, yaw);
@@ -189,7 +194,8 @@ void ImuFilter::imuMagCallback(
     dt);
 
   publishFilteredMsg(imu_msg_raw);
-  publishTransform(imu_msg_raw);
+  if (publish_tf_)
+    publishTransform(imu_msg_raw);
 }
 
 void ImuFilter::publishTransform(const ImuMsg::ConstPtr& imu_msg_raw)
