@@ -1,0 +1,9 @@
+<!-- Imu Filter nodelet publisher -->
+<library path="lib/libimu_filter_stabilizer_nodelet">
+  <class name="imu_filter_stabilizer/ImuFilterStabilizerNodelet" type="ImuFilterStabilizerNodelet" 
+    base_class_type="nodelet::Nodelet">
+    <description>
+      Imu Filter Stabilizer nodelet publisher.
+    </description>
+  </class>
+</library>

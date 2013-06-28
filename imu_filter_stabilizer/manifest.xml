@@ -1,0 +1,24 @@
+<package>
+  <description brief="imu_filter_stabilizer">
+
+     imu_filter_stabilizer
+
+  </description>
+  <author>Lorenzo Riano</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/imu_filter_stabilizer</url>
+  <depend package="roscpp"/>
+  <depend package="sensor_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="tf"/>
+  <depend package="nodelet"/>
+  <depend package="std_srvs"/>
+
+  <export>
+    <nodelet plugin="${prefix}/imu_filter_stabilizer_nodelet.xml" />
+  </export>
+
+</package>
+
+
