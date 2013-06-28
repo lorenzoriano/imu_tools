@@ -2,6 +2,7 @@
 #include <tf/transform_datatypes.h>
 #include <tf/LinearMath/Scalar.h>
 #include <cmath>
+#include <algorithm>
 
 ImuFilterStabilizer::ImuFilterStabilizer() {
 
@@ -39,6 +40,9 @@ void ImuFilterStabilizer::imuCallback(const sensor_msgs::ImuConstPtr& imu_msg_ra
         last_quaternion_ = current_orientation;
         tf::Quaternion new_orientation = current_orientation * ref_orientation_.inverse();
         tf::quaternionTFToMsg(new_orientation, msg.orientation);
+        std::fill(msg.orientation_covariance.begin(),
+                  msg.orientation_covariance.end(),
+                  1e-5);
         imu_publisher_.publish(msg);
         return;
     }
