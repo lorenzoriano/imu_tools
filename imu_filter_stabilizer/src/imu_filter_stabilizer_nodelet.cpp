@@ -9,5 +9,8 @@ void ImuFilterStabilizerNodelet::onInit()
 {
   NODELET_INFO("Initializing IMU Filter Nodelet");
 
-  filter_ = new ImuFilterStabilizer;
+  ros::NodeHandle nh         = getMTNodeHandle();
+  ros::NodeHandle nh_private = getMTPrivateNodeHandle();
+
+  filter_ = new ImuFilterStabilizer(nh, nh_private);
 }

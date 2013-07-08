@@ -4,22 +4,20 @@
 #include <cmath>
 #include <algorithm>
 
-ImuFilterStabilizer::ImuFilterStabilizer() {
-
-    ros::NodeHandle n;
-    ros::NodeHandle priv_n("~");
+ImuFilterStabilizer::ImuFilterStabilizer(ros::NodeHandle n, ros::NodeHandle priv_n) {
 
     imu_suscriber_ = n.subscribe("imu/data", 0,
                                  &ImuFilterStabilizer::imuCallback, this);
     imu_publisher_ = n.advertise<sensor_msgs::Imu>("imu/data_stabilized", 5);
-    reset_srv_ = priv_n.advertiseService("reset",
+    reset_srv_ = priv_n.advertiseService("stabilizer_reset",
                                          &ImuFilterStabilizer::resetCallback,
                                          this);
 
-    priv_n.param("tol", tol_, 0.001);
+    priv_n.param("stabilization_tol", tol_, 0.001);
 
     initialized_ = false;
     stabilized_ = false;
+
 
 }
 
@@ -57,6 +55,8 @@ void ImuFilterStabilizer::imuCallback(const sensor_msgs::ImuConstPtr& imu_msg_ra
         return;
     }
     else {
+//        ROS_INFO("Waiting for IMU to stabilize, current error: %f, target error: %f",
+//                 fabs(angle_diff), tol_);
         last_quaternion_ = current_orientation;
         stabilized_ = false;
     }

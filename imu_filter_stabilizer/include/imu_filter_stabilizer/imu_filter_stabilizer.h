@@ -9,7 +9,7 @@
 
 class ImuFilterStabilizer {
 public:
-    ImuFilterStabilizer();
+    ImuFilterStabilizer(ros::NodeHandle nh, ros::NodeHandle nh_private);
 
 private:
     void imuCallback(const sensor_msgs::ImuConstPtr& imu_msg_raw);
