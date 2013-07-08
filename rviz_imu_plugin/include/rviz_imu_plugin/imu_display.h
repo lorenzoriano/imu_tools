@@ -151,7 +151,7 @@ private:
     bool acc_enabled_;
 
     // A node in the Ogre scene tree to be the parent of all our visuals.
-    Ogre::SceneNode* scene_node_;
+//    Ogre::SceneNode* scene_node_;
 
     int messages_received_;
 

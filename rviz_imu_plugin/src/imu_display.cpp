@@ -38,8 +38,7 @@ namespace rviz
 ImuDisplay::ImuDisplay():
     box_enabled_(false),
     axes_enabled_(true),
-    acc_enabled_(false),
-    scene_node_(NULL),
+    acc_enabled_(false),    
     messages_received_(0)
 {
     createProperties();
