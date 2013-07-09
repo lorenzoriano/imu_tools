@@ -57,8 +57,8 @@ void ImuFilterStabilizer::imuCallback(const sensor_msgs::ImuConstPtr& imu_msg_ra
         return;
     }
     else {
-        ROS_INFO("Waiting for IMU to stabilize, current error: %f, target error: %f,"
-                 " dt:, %f", fabs(angle_diff / dt), tol_, dt);
+//        ROS_INFO("Waiting for IMU to stabilize, current error: %f, target error: %f,"
+//                 " dt:, %f", fabs(angle_diff / dt), tol_, dt);
         last_quaternion_ = current_orientation;
         last_time_ = imu_msg_raw->header.stamp;
         stabilized_ = false;
