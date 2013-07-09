@@ -19,6 +19,7 @@ private:
     ros::Subscriber imu_suscriber_;
     ros::ServiceServer reset_srv_;
     tf::Quaternion last_quaternion_;
+    ros::Time last_time_;
     tf::Quaternion ref_orientation_;
 
     bool initialized_;

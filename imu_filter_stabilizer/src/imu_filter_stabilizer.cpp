@@ -28,6 +28,7 @@ void ImuFilterStabilizer::imuCallback(const sensor_msgs::ImuConstPtr& imu_msg_ra
 
     if (!initialized_) {
         last_quaternion_ = current_orientation;
+        last_time_ = imu_msg_raw->header.stamp;
         initialized_ = true;
         return;
     }
@@ -40,14 +41,15 @@ void ImuFilterStabilizer::imuCallback(const sensor_msgs::ImuConstPtr& imu_msg_ra
         tf::quaternionTFToMsg(new_orientation, msg.orientation);
         std::fill(msg.orientation_covariance.begin(),
                   msg.orientation_covariance.end(),
-                  1e-5);
+                  0);
         imu_publisher_.publish(msg);
         return;
     }
 
     //not stabilized, doing the math
     tfScalar angle_diff = current_orientation.angleShortestPath(last_quaternion_);
-    if (fabs(angle_diff) < tol_) {
+    tfScalar dt =  (imu_msg_raw->header.stamp - last_time_).toSec();
+    if (fabs(angle_diff/dt) < tol_) {
         //stabilized!
         stabilized_ = true;
         ref_orientation_ = current_orientation;
@@ -55,9 +57,10 @@ void ImuFilterStabilizer::imuCallback(const sensor_msgs::ImuConstPtr& imu_msg_ra
         return;
     }
     else {
-//        ROS_INFO("Waiting for IMU to stabilize, current error: %f, target error: %f",
-//                 fabs(angle_diff), tol_);
+        ROS_INFO("Waiting for IMU to stabilize, current error: %f, target error: %f,"
+                 " dt:, %f", fabs(angle_diff / dt), tol_, dt);
         last_quaternion_ = current_orientation;
+        last_time_ = imu_msg_raw->header.stamp;
         stabilized_ = false;
     }
 
